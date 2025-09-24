@@ -69,12 +69,12 @@ export default async function Admin() {
                   Edit
                 </Link>
                 <DeleteForm id={product.id} />
-                <button
+                {/* <button
                   className="bg-neutral-600 text-white p-2 cursor-pointer"
                   type="submit"
                 >
                   Delete
-                </button>
+                </button> */}
               </th>
             </tr>
           ))}
