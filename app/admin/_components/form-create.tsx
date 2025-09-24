@@ -1,9 +1,25 @@
 "use client";
+import { createProduct } from "@/app/admin/_lib/actions";
 import { PlatziCategory } from "@/lib/types";
 import Form from "next/form";
 import Link from "next/link";
+import { useFormStatus } from "react-dom";
 
 // https://nextjs.org/docs/app/getting-started/project-structure#route-groups-and-private-folders
+
+// a fancier button using formstatus to see if the server action is pending or not
+function SaveButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      className="bg-neutral-200 p-2 cursor-pointer"
+      type="submit"
+      disabled={pending}
+    >
+      {pending ? "Saving..." : "Save"}
+    </button>
+  );
+}
 
 export default function FormCreate({
   categories,
@@ -11,7 +27,7 @@ export default function FormCreate({
   categories: PlatziCategory[];
 }) {
   return (
-    <Form className="grid gap-2" action="">
+    <Form className="grid gap-2" action={createProduct}>
       <label htmlFor="category">Category</label>
       <select name="category" id="category" className="border p-2">
         {categories.map((category) => (
@@ -73,9 +89,7 @@ export default function FormCreate({
         >
           Cancel
         </Link>
-        <button className="bg-neutral-200 p-2 cursor-pointer" type="submit">
-          Save
-        </button>
+        <SaveButton />
       </div>
     </Form>
   );
