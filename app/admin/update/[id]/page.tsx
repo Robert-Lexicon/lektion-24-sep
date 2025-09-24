@@ -26,6 +26,7 @@ export default async function UpdateProductPage({
 
   return (
     <Form className="grid gap-2" action="">
+      <input hidden readOnly name="id" defaultValue={product.id} />
       <label htmlFor="category">Category</label>
       <select
         name="category"
