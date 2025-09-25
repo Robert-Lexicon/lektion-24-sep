@@ -1,5 +1,6 @@
 "use server";
 
+import { PlatziCreateProduct } from "@/lib/types";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -36,6 +37,50 @@ export async function createProduct(formData: FormData) {
   redirect("/admin?status=success");
 }
 
+export async function createProductState(
+  prevState: unknown,
+  formData: FormData
+): Promise<{
+  message: string;
+  data: PlatziCreateProduct;
+  errors?: Record<string, string[]>;
+} | null> {
+  const title = formData.get("title") as string;
+  const price = formData.get("price") as string;
+  const description = formData.get("description") as string;
+  const category = formData.get("category") as string;
+  const image = formData.get("imageUrl") as string;
+
+  //we could loop thru all formData and then process it more after instead of above
+  //const postData = Object.fromEntries(formData.entries())
+
+  const newProduct = {
+    title,
+    price: parseInt(price),
+    description,
+    categoryId: parseInt(category),
+    images: [image],
+  };
+
+  const res = await fetch("https://api.escuelajs.co/api/v1/productsk/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newProduct),
+  });
+
+  if (!res.ok)
+    return {
+      message: "Something went wrong",
+      data: newProduct,
+    };
+
+  const data = await res.json();
+  console.log(data);
+
+  revalidatePath("/"); //typ tömmer cache så vi tvingas ladda om datan
+  redirect("/admin?status=success");
+}
+
 export async function deleteProduct(formData: FormData) {
   const id = formData.get("id");
   const res = await fetch(`https://api.escuelajs.co/api/v1/products/${id}`, {
@@ -49,4 +94,20 @@ export async function deleteProduct(formData: FormData) {
   //if data=true ...
   console.log(data);
   revalidatePath("/");
+}
+
+export async function deleteProductFromClientAction(id: number) {
+  const res = await fetch(`https://api.escuelajs.co/api/v1/products/${id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!res.ok) return false;
+
+  const data: boolean = await res.json();
+
+  //check if true first
+  revalidatePath("/");
+
+  return data;
 }
