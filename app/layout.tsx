@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Link from "next/link";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -21,6 +22,7 @@ export default function RootLayout({
           <Link href="/contact">Contact</Link>
         </nav>
         <main className="max-w-4xl mx-auto">{children}</main>
+        <Toaster />
       </body>
     </html>
   );
